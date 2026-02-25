@@ -25,9 +25,25 @@
       </div>
 
       <div class="form-group">
+        <label>LLM Provider</label>
+        <select id="llm-provider">
+          <option value="anthropic">Anthropic</option>
+          <option value="openai">OpenAI</option>
+          <option value="mistral">Mistral</option>
+          <option value="groq">Groq</option>
+          <option value="cohere">Cohere</option>
+        </select>
+      </div>
+
+      <div class="form-group">
         <label>LLM API Key</label>
-        <input type="password" id="api-key" placeholder="sk-ant-..." />
+        <input type="password" id="api-key" placeholder="API key" />
         <small>Stored locally. Never shared.</small>
+      </div>
+
+      <div class="form-group">
+        <label>Model (optional)</label>
+        <input type="text" id="llm-model" placeholder="Default model for your provider" />
       </div>
 
       <button id="btn-save-setup" class="btn-primary">

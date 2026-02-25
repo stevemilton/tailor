@@ -20,10 +20,11 @@ async function setStorage(data) {
 
 // ---- INIT ----
 document.addEventListener('DOMContentLoaded', async () => {
-  const data = await getStorage(['apiKey', 'linkedinUrl', 'masterCV']);
+  const data = await getStorage(['apiKey', 'linkedinUrl', 'masterCV', 'llmProvider', 'llmModel']);
 
   if (!data.apiKey || !data.linkedinUrl) {
     showScreen('setup');
+    initProviderDefaults();
     return;
   }
 
@@ -89,12 +90,16 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Store master CV reference
   window.masterCV = data.masterCV;
   window.apiKey = data.apiKey;
+  window.llmProvider = data.llmProvider || 'anthropic';
+  window.llmModel = data.llmModel || '';
 });
 
 // ---- SETUP ----
 document.getElementById('btn-save-setup').addEventListener('click', async () => {
   const url = document.getElementById('linkedin-url').value.trim();
   const key = document.getElementById('api-key').value.trim();
+  const provider = document.getElementById('llm-provider').value;
+  const model = document.getElementById('llm-model').value.trim();
 
   if (!url || !key) {
     alert('Please fill in both fields.');
@@ -105,7 +110,7 @@ document.getElementById('btn-save-setup').addEventListener('click', async () => 
   // Ensure https://www. prefix so it matches host_permissions
   cleanUrl = cleanUrl.replace(/^(https?:\/\/)?(www\.)?/, 'https://www.');
 
-  await setStorage({ linkedinUrl: cleanUrl, apiKey: key });
+  await setStorage({ linkedinUrl: cleanUrl, apiKey: key, llmProvider: provider, llmModel: model });
 
   showScreen('loading-profile');
 
@@ -216,8 +221,8 @@ Keep it under 350 words. Do not use clichés. Sound like a real human, not an AI
 
     // Run both API calls in parallel
     const [cvText, coverText] = await Promise.all([
-      callClaude(apiKey, cvPrompt),
-      callClaude(apiKey, coverPrompt).then(result => { activateStep(2); return result; })
+      callLLM(window.llmProvider, apiKey, window.llmModel, cvPrompt),
+      callLLM(window.llmProvider, apiKey, window.llmModel, coverPrompt).then(result => { activateStep(2); return result; })
     ]);
 
     // Step 4: Prepare
@@ -240,8 +245,63 @@ Keep it under 350 words. Do not use clichés. Sound like a real human, not an AI
 });
 
 // ---- CLAUDE API ----
-async function callClaude(apiKey, prompt) {
-  const response = await fetch('https://api.anthropic.com/v1/messages', {
+function initProviderDefaults() {
+  const providerEl = document.getElementById('llm-provider');
+  const modelEl = document.getElementById('llm-model');
+  const defaults = {
+    anthropic: 'claude-sonnet-4-6',
+    openai: 'gpt-4o-mini',
+    mistral: 'mistral-large-latest',
+    groq: 'llama-3.1-70b-versatile',
+    cohere: 'command-r-plus-08-2024'
+  };
+
+  if (providerEl && modelEl) {
+    modelEl.placeholder = `Default: ${defaults[providerEl.value]}`;
+    providerEl.addEventListener('change', () => {
+      modelEl.placeholder = `Default: ${defaults[providerEl.value]}`;
+      if (!modelEl.value.trim()) {
+        modelEl.value = '';
+      }
+    });
+  }
+}
+
+async function callLLM(provider, apiKey, modelOverride, prompt) {
+  const providers = {
+    anthropic: { kind: 'anthropic', baseUrl: 'https://api.anthropic.com/v1/messages', defaultModel: 'claude-sonnet-4-6' },
+    openai: { kind: 'openai-compat', baseUrl: 'https://api.openai.com/v1/chat/completions', defaultModel: 'gpt-4o-mini' },
+    mistral: { kind: 'openai-compat', baseUrl: 'https://api.mistral.ai/v1/chat/completions', defaultModel: 'mistral-large-latest' },
+    groq: { kind: 'openai-compat', baseUrl: 'https://api.groq.com/openai/v1/chat/completions', defaultModel: 'llama-3.1-70b-versatile' },
+    cohere: { kind: 'openai-compat', baseUrl: 'https://api.cohere.ai/compatibility/v1/chat/completions', defaultModel: 'command-r-plus-08-2024' }
+  };
+  const config = providers[provider] || providers.anthropic;
+  const model = modelOverride || config.defaultModel;
+
+  if (config.kind === 'openai-compat') {
+    const response = await fetch(config.baseUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`
+      },
+      body: JSON.stringify({
+        model,
+        max_tokens: 2000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    if (!response.ok) {
+      const err = await response.json();
+      throw new Error(err.error?.message || 'LLM API error');
+    }
+
+    const data = await response.json();
+    return data.choices?.[0]?.message?.content?.trim() || '';
+  }
+
+  const response = await fetch(config.baseUrl, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -250,7 +310,7 @@ async function callClaude(apiKey, prompt) {
       'anthropic-dangerous-direct-browser-access': 'true'
     },
     body: JSON.stringify({
-      model: 'claude-sonnet-4-6',
+      model,
       max_tokens: 2000,
       messages: [{ role: 'user', content: prompt }]
     })
@@ -262,7 +322,7 @@ async function callClaude(apiKey, prompt) {
   }
 
   const data = await response.json();
-  return data.content[0].text;
+  return data.content?.[0]?.text || '';
 }
 
 // ---- TABS ----

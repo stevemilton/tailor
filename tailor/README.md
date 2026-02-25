@@ -21,18 +21,18 @@ Your CV, tailored perfectly. One click on any LinkedIn job.
 4. Select this `tailor` folder
 5. The Tailor icon appears in your toolbar
 
-### 2. Get a LLM API Key
+### 2. Get an LLM API Key
 
-1. Go to [console.anthropic.com](https://console.anthropic.com)
+1. Choose a provider (Anthropic, OpenAI, Mistral, Groq, or Cohere)
 2. Create an account and add a payment method
-3. Go to API Keys → Create Key
-4. Copy the key (starts with `sk-ant-`)
+3. Create an API key in your provider dashboard
+4. Copy the key
 
 ### 3. First-time setup
 
 1. Click the Tailor icon in Chrome
 2. Paste your LinkedIn profile URL (e.g. `linkedin.com/in/yourname`)
-3. Paste your LLM API key
+3. Select your LLM provider and paste your LLM API key
 4. Click **Get Started** — Tailor reads your profile automatically
 
 ### 4. Use it
@@ -45,7 +45,7 @@ Your CV, tailored perfectly. One click on any LinkedIn job.
 
 ## Cost
 
-Uses LLM API — roughly £0.02–0.05 per application.
+Uses LLM API — roughly £0.02–0.05 per application (varies by provider).
 
 ## Icons
 

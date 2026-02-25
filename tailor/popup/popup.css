@@ -108,7 +108,8 @@ body {
   margin-bottom: 8px;
 }
 
-.form-group input {
+.form-group input,
+.form-group select {
   width: 100%;
   padding: 12px 14px;
   border: 1.5px solid var(--border);
@@ -121,7 +122,8 @@ body {
   transition: border-color 0.2s;
 }
 
-.form-group input:focus {
+.form-group input:focus,
+.form-group select:focus {
   border-color: var(--gold);
 }
 
