@@ -21,7 +21,7 @@ Your CV, tailored perfectly. One click on any LinkedIn job.
 4. Select this `tailor` folder
 5. The Tailor icon appears in your toolbar
 
-### 2. Get a Claude API Key
+### 2. Get a LLM API Key
 
 1. Go to [console.anthropic.com](https://console.anthropic.com)
 2. Create an account and add a payment method
@@ -32,7 +32,7 @@ Your CV, tailored perfectly. One click on any LinkedIn job.
 
 1. Click the Tailor icon in Chrome
 2. Paste your LinkedIn profile URL (e.g. `linkedin.com/in/yourname`)
-3. Paste your Claude API key
+3. Paste your LLM API key
 4. Click **Get Started** — Tailor reads your profile automatically
 
 ### 4. Use it
@@ -45,7 +45,7 @@ Your CV, tailored perfectly. One click on any LinkedIn job.
 
 ## Cost
 
-Uses Claude API — roughly £0.02–0.05 per application.
+Uses LLM API — roughly £0.02–0.05 per application.
 
 ## Icons
 

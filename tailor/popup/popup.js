@@ -258,7 +258,7 @@ async function callClaude(apiKey, prompt) {
 
   if (!response.ok) {
     const err = await response.json();
-    throw new Error(err.error?.message || 'Claude API error');
+    throw new Error(err.error?.message || 'LLM API error');
   }
 
   const data = await response.json();
