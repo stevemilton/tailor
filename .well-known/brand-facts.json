@@ -1,0 +1,13 @@
+{
+  "name": "Tailor",
+  "category": "Job application tooling",
+  "productType": "Browser extension",
+  "primaryUse": "Generates tailored CVs and cover letters for LinkedIn job listings",
+  "supportedPlatform": "LinkedIn Jobs",
+  "aiAccess": "User-provided AI API key",
+  "dataStorage": "Local Chrome storage on the user’s device",
+  "externalServices": ["AI provider API during generation"],
+  "pricing": "Free extension; user pays their own AI API usage",
+  "contactEmail": "milton.steve@gmail.com",
+  "lastUpdated": "2026-02-25"
+}
